@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
+  --font-serif: "Fraunces", "Noto Serif SC", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-ink: #1a1614;
+  --color-paper: #fdf9f1;
+  --color-cream: #f6efe0;
+  --color-sun: #ffb020;
+  --color-ember: #ff5a3c;
+  --color-rose: #ff7a9a;
+  --color-sky: #4b8bff;
+  --color-leaf: #3ea16d;
+  --color-violet: #8a5cff;
+}
+
+@layer base {
+  html,
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-sun);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-variation-settings: "opsz" 120, "SOFT" 50;
+  }
+
+  .noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.25;
+    mix-blend-mode: multiply;
+  }
+
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .underline-sketch {
+    background-image: linear-gradient(transparent 65%, var(--color-sun) 65%, var(--color-sun) 92%, transparent 92%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .stroke-sketch {
+    -webkit-text-stroke: 1.5px var(--color-ink);
+    color: transparent;
+  }
+
+  .shadow-paper {
+    box-shadow:
+      0 1px 0 rgba(26, 22, 20, 0.1),
+      0 8px 20px -10px rgba(26, 22, 20, 0.2);
+  }
+
+  .shadow-card {
+    box-shadow:
+      0 2px 0 var(--color-ink),
+      6px 6px 0 var(--color-ink);
+  }
+
+  .rotate-tilt-1 {
+    transform: rotate(-1.5deg);
+  }
+  .rotate-tilt-2 {
+    transform: rotate(1.2deg);
+  }
+  .rotate-tilt-3 {
+    transform: rotate(-0.6deg);
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(26, 22, 20, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 22, 20, 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .bg-dots {
+    background-image: radial-gradient(rgba(26, 22, 20, 0.18) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  @keyframes floaty {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  .animate-floaty {
+    animation: floaty 4s ease-in-out infinite;
+  }
+
+  @keyframes headerFade {
+    from {
+      opacity: 0;
+      filter: blur(3px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  .animate-header-fade {
+    animation: headerFade 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
