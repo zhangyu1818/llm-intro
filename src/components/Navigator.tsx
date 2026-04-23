@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import { chapters } from '../data/chapters'
 import { useActiveSection } from '../hooks/useActiveSection'
@@ -8,15 +8,19 @@ const CHAPTER_IDS = chapters.map((c) => c.id)
 
 export function Navigator() {
   const active = useActiveSection(CHAPTER_IDS)
-  const progress = useScrollProgress()
-  const [scrolled, setScrolled] = useState(false)
+  const progressRef = useScrollProgress()
+  const headerBgRef = useRef<HTMLDivElement | null>(null)
   const activeChapter = useMemo(
     () => chapters.find((c) => c.id === active) ?? null,
     [active],
   )
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => {
+      if (headerBgRef.current) {
+        headerBgRef.current.style.opacity = window.scrollY > 24 ? '1' : '0'
+      }
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -25,44 +29,11 @@ export function Navigator() {
   return (
     <>
       <div
+        ref={headerBgRef}
         aria-hidden
-        className={`pointer-events-none fixed inset-x-0 top-0 z-40 h-24 transition-opacity duration-500 ease-out md:h-28 ${
-          scrolled ? 'opacity-100' : 'opacity-0'
-        }`}
+        className="pointer-events-none fixed inset-x-0 top-0 z-40 h-24 transition-opacity duration-200 ease-out md:h-28"
+        style={{ opacity: 0 }}
       >
-        <div
-          className="absolute inset-0"
-          style={{
-            backdropFilter: 'blur(1px)',
-            WebkitBackdropFilter: 'blur(1px)',
-            maskImage:
-              'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,0) 25%)',
-            WebkitMaskImage:
-              'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,0) 25%)',
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backdropFilter: 'blur(2px)',
-            WebkitBackdropFilter: 'blur(2px)',
-            maskImage:
-              'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 50%)',
-            WebkitMaskImage:
-              'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 50%)',
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
-            maskImage:
-              'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,0) 75%)',
-            WebkitMaskImage:
-              'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,0) 75%)',
-          }}
-        />
         <div
           className="absolute inset-0"
           style={{
@@ -86,8 +57,9 @@ export function Navigator() {
 
       <div className="pointer-events-none fixed inset-x-0 top-0 z-50 h-1">
         <div
-          className="h-full bg-ember origin-left transition-transform duration-75"
-          style={{ transform: `scaleX(${progress})` }}
+          ref={progressRef}
+          className="h-full bg-ember origin-left"
+          style={{ transform: 'scaleX(0)' }}
         />
       </div>
 

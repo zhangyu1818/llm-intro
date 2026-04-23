@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
-export function useScrollProgress(): number {
-  const [progress, setProgress] = useState(0)
+export function useScrollProgress() {
+  const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     let frame = 0
@@ -9,14 +9,16 @@ export function useScrollProgress(): number {
       const doc = document.documentElement
       const max = doc.scrollHeight - doc.clientHeight
       const p = max > 0 ? doc.scrollTop / max : 0
-      setProgress(p)
+      if (ref.current) {
+        ref.current.style.transform = `scaleX(${p})`
+      }
       frame = 0
     }
     const onScroll = () => {
       if (frame) return
       frame = requestAnimationFrame(update)
     }
-    onScroll()
+    update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
     return () => {
@@ -26,5 +28,5 @@ export function useScrollProgress(): number {
     }
   }, [])
 
-  return progress
+  return ref
 }
