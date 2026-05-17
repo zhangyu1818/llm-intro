@@ -5,10 +5,10 @@ export function useActiveSection(ids: string[]): string {
 
   useEffect(() => {
     const elements = ids
-      .map((id) => document.getElementById(id))
+      .map((id) => document.querySelector<HTMLElement>(`#${id}`))
       .filter((el): el is HTMLElement => Boolean(el))
 
-    if (elements.length === 0) return
+    if (elements.length === 0) {return}
 
     const observer = new IntersectionObserver(
       (entries) => {

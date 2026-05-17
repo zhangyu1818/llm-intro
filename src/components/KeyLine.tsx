@@ -1,10 +1,13 @@
 import type { ReactNode } from 'react'
 
+import { useGlobal } from '../i18n'
+
 export function KeyLine({ children }: { children: ReactNode }) {
+  const g = useGlobal()
   return (
     <div className="mt-20 border-t border-ink/10 pt-10">
       <div className="font-mono text-xs tracking-[0.3em] text-ink/50 uppercase">
-        本章最该记住的一句话
+        {g.keyLineLabel}
       </div>
       <div className="relative mt-4">
         <div

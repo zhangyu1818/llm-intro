@@ -2,16 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 
 export function useInView<T extends Element = HTMLDivElement>(
   threshold = 0.3,
-): { ref: React.RefObject<T | null>; inView: boolean } {
-  const ref = useRef<T | null>(null)
+): { inView: boolean; ref: React.RefObject<null | T>; } {
+  const ref = useRef<null | T>(null)
   const [inView, setInView] = useState(false)
 
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el) {return}
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setInView(true)
+        if (entry.isIntersecting) {setInView(true)}
       },
       { threshold },
     )
@@ -21,5 +21,5 @@ export function useInView<T extends Element = HTMLDivElement>(
     }
   }, [threshold])
 
-  return { ref, inView }
+  return { inView, ref }
 }

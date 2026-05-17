@@ -15,7 +15,7 @@ export function useScrollProgress() {
       frame = 0
     }
     const onScroll = () => {
-      if (frame) return
+      if (frame) {return}
       frame = requestAnimationFrame(update)
     }
     update()
@@ -24,7 +24,7 @@ export function useScrollProgress() {
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
-      if (frame) cancelAnimationFrame(frame)
+      if (frame) {cancelAnimationFrame(frame)}
     }
   }, [])
 

@@ -3,10 +3,14 @@ import { useEffect, useMemo, useRef } from 'react'
 import { chapters } from '../data/chapters'
 import { useActiveSection } from '../hooks/useActiveSection'
 import { useScrollProgress } from '../hooks/useScrollProgress'
+import { useGlobal } from '../i18n'
+import { cn } from '../utils/cn'
+import { LangSwitcher } from './LangSwitcher'
 
 const CHAPTER_IDS = chapters.map((c) => c.id)
 
 export function Navigator() {
+  const g = useGlobal()
   const active = useActiveSection(CHAPTER_IDS)
   const progressRef = useScrollProgress()
   const headerBgRef = useRef<HTMLDivElement | null>(null)
@@ -14,6 +18,7 @@ export function Navigator() {
     () => chapters.find((c) => c.id === active) ?? null,
     [active],
   )
+  const activeMeta = activeChapter ? g.chapterMeta[activeChapter.id] : null
 
   useEffect(() => {
     const onScroll = () => {
@@ -48,9 +53,9 @@ export function Navigator() {
         <div
           className="absolute inset-0"
           style={{
+            opacity: 0.75,
             background:
               'linear-gradient(to bottom, var(--color-paper) 0%, rgba(253,249,241,0.55) 50%, rgba(253,249,241,0) 100%)',
-            opacity: 0.75,
           }}
         />
       </div>
@@ -67,26 +72,27 @@ export function Navigator() {
         <ul className="pointer-events-auto flex flex-col gap-3">
           {chapters.map((c) => {
             const on = active === c.id
+            const meta = g.chapterMeta[c.id]
             return (
               <li key={c.id}>
                 <a
-                  href={`#${c.id}`}
+                  aria-label={`${c.index} ${meta.title}`}
                   className="group flex items-center gap-3"
-                  aria-label={`${c.index} ${c.title}`}
+                  href={`#${c.id}`}
                 >
                   <span
-                    className={`font-mono text-[10px] tracking-widest transition-all ${
-                      on
-                        ? 'text-ink opacity-100'
-                        : 'text-ink/50 opacity-0 group-hover:opacity-100'
-                    }`}
+                    className={cn(
+                      'font-mono text-[10px] tracking-widest transition-all',
+                      on ? 'text-ink opacity-100' : 'text-ink/50 opacity-0 group-hover:opacity-100',
+                    )}
                   >
                     {c.index}
                   </span>
                   <span
-                    className={`inline-block rounded-full border border-ink transition-all ${
-                      on ? 'h-3 w-3 bg-ember' : 'h-2 w-2 bg-paper group-hover:bg-sun'
-                    }`}
+                    className={cn(
+                      'inline-block rounded-full border border-ink transition-all',
+                      on ? 'h-3 w-3 bg-ember' : 'h-2 w-2 bg-paper group-hover:bg-sun',
+                    )}
                   />
                 </a>
               </li>
@@ -97,30 +103,33 @@ export function Navigator() {
 
       <header className="fixed inset-x-0 top-1 z-50 flex items-center justify-between gap-4 px-5 py-3 md:px-10">
         <a
-          href="#hero"
+          aria-label={g.backToHero}
           className="flex min-w-0 items-center gap-2 font-display"
-          aria-label="回到开头"
+          href="#hero"
         >
-          {active === 'hero' || !activeChapter ? (
+          {active === 'hero' || !activeMeta ? (
             <span
               key="brand"
               className="animate-header-fade text-lg font-bold tracking-tight md:text-xl"
             >
-              看懂大模型<span className="text-ember">.</span>
+              {g.brand}<span className="text-ember">{g.brandSuffix}</span>
             </span>
           ) : (
             <span
-              key={activeChapter.id}
+              key={activeChapter!.id}
               className="animate-header-fade block min-w-0 truncate text-base leading-tight font-semibold text-ink md:text-lg"
             >
-              {activeChapter.title}
+              {activeMeta.title}
             </span>
           )}
         </a>
-        <div className="shrink-0 font-mono text-xs tracking-widest text-ink/60">
-          {activeChapter?.index ?? '00'}
-          <span className="mx-2">/</span>
-          {chapters[chapters.length - 1].index}
+        <div className="flex shrink-0 items-center gap-5">
+          <LangSwitcher />
+          <span className="hidden font-mono text-xs tracking-widest text-ink/60 sm:inline">
+            {activeChapter?.index ?? '00'}
+            <span className="mx-2">/</span>
+            {chapters[chapters.length - 1].index}
+          </span>
         </div>
       </header>
     </>

@@ -1,7 +1,7 @@
 import { fixupConfigRules } from '@eslint/compat'
 import { defineConfig } from '@zhangyu1818/eslint-config'
 
-export default fixupConfigRules(await defineConfig({
+const base = await defineConfig({
   presets: {
     react: {
       options: {
@@ -25,4 +25,19 @@ export default fixupConfigRules(await defineConfig({
       },
     },
   },
-}))
+})
+
+export default [
+  ...fixupConfigRules(base),
+  {
+    rules: {
+      'react/no-array-index-key': 'off',
+    },
+  },
+  {
+    files: ['src/**/*.i18n.tsx'],
+    rules: {
+      'react/no-unescaped-entities': 'off',
+    },
+  },
+]

@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react'
 
+import { cn } from '../utils/cn'
+
 export function Prose({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`prose-custom max-w-prose text-lg leading-relaxed text-ink/85 md:text-xl md:leading-[1.8] ${className}`}
+      className={cn('prose-custom max-w-prose text-lg leading-relaxed text-ink/85 md:text-xl md:leading-[1.8]', className)}
     >
       {children}
     </div>

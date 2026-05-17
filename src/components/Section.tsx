@@ -1,21 +1,21 @@
 import type { ReactNode } from 'react'
 
 interface Props {
+  accent?: string
+  caption?: string
+  children: ReactNode
+  eyebrow?: string
   id: string
   index: string
-  eyebrow?: string
   title: ReactNode
-  caption?: string
-  accent?: string
-  children: ReactNode
 }
 
-export function Section({ id, index, eyebrow, title, caption, accent = '--color-sun', children }: Props) {
+export function Section({ id, accent = '--color-sun', caption, children, eyebrow, index, title }: Props) {
   return (
     <section
-      id={id}
-      data-section={id}
       className="relative min-h-screen px-6 py-24 md:px-12 md:py-32"
+      data-section={id}
+      id={id}
       style={{ ['--accent' as string]: `var(${accent})` }}
     >
       <div className="mx-auto w-full max-w-6xl">
